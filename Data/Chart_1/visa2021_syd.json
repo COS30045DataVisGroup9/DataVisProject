@@ -1,0 +1,139 @@
+{
+    "name": "root",
+    "children": [
+        {
+            "name": "Overseas migrant arrivals",
+            "children": [
+                {
+                    "name": "Permanent visas",
+                    "children": [
+                        {
+                            "name": "Family",
+                            "value": 3920
+                        },
+                        {
+                            "name": "Skilled (permanent)",
+                            "value": 3630
+                        },
+                        {
+                            "name": "Special eligibility and humanitarian",
+                            "value": 150
+                        },
+                        {
+                            "name": "Other (permanent)",
+                            "value": 1300
+                        }
+                    ]
+                },
+                {
+                    "name": "Temporary visas",
+                    "children": [
+                        {
+                            "name": "Student - vocational education and training",
+                            "value": 20
+                        },
+                        {
+                            "name": "Student - higher education",
+                            "value": 160
+                        },
+                        {
+                            "name": "Student - other",
+                            "value": 130
+                        },
+                        {
+                            "name": "Skilled (temporary)",
+                            "value": 1400                
+                        },
+                        {
+                            "name": "Working holiday",
+                            "value": 160
+                        },
+                        {
+                            "name": "Visitors",
+                            "value": 1480
+                        },
+                        {
+                            "name": "Other (temporary)",
+                            "value": 1040
+                        }
+                    ]
+                },
+                {
+                    "name": "New Zealand citizens (subclass 444)",
+                    "value": 3310
+                },
+                {
+                    "name": "Australian citizens (no visa)",
+                    "value": 10360
+                }
+            ] 
+        },
+        {
+            "name": "Overseas migrant departures",
+            "children": [
+                {
+                    "name": "Permanent visas",
+                    "children": [
+                        {
+                            "name": "Family",
+                            "value": 1490
+                        },
+                        {
+                            "name": "Skilled (permanent)",
+                            "value": 2880
+                        },
+                        {
+                            "name": "Special eligibility and humanitarian",
+                            "value": 20
+                        },
+                        {
+                            "name": "Other (permanent)",
+                            "value": 2640
+                        }
+                    ]
+                },
+                {
+                    "name": "Temporary visas",
+                    "children": [
+                        {
+                            "name": "Student - vocational education and training",
+                            "value": 3660
+                        },
+                        {
+                            "name": "Student - higher education",
+                            "value": 18390
+                        },
+                        {
+                            "name": "Student - other",
+                            "value": 2620
+                        },
+                        {
+                            "name": "Skilled (temporary)",
+                            "value": 3330             
+                        },
+                        {
+                            "name": "Working holiday",
+                            "value": 2120
+                        },
+                        {
+                            "name": "Visitors",
+                            "value": 4910
+                        },
+                        {
+                            "name": "Other (temporary)",
+                            "value": 19560
+                        }
+                    ]
+                },
+                {
+                    "name": "New Zealand citizens (subclass 444)",
+                    "value": 5380
+                },
+                {
+                    "name": "Australian citizens (no visa)",
+                    "value": 12320
+                } 
+            ] 
+        }
+    ]
+}
