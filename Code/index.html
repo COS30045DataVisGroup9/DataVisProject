@@ -7,12 +7,84 @@
     <meta name="author" content="Hoang Minh Nguyen" />
 
     <title>Data Visualisation</title>
+    <style>
+      .slider-container {
+        margin-top: 20px;
+        /* padding-left: 2%; */
+      }
 
+      .slider {
+        width: 50%;
+        /* margin-left: 5%; */
+      }
+
+      /* Styling for the slider track */
+      .slider::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 8px;
+        background: #ddd;
+        border-radius: 4px;
+      }
+
+      /* Styling for the slider thumb */
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        background: #333;
+        border-radius: 50%;
+        cursor: pointer;
+        margin-top: -4px;
+      }
+
+      /* Styling for the thumb when active (pressed) */
+      .slider::-webkit-slider-thumb:active {
+        background: #555;
+      }
+
+      /* Styling for the thumb when hovered */
+      .slider::-webkit-slider-thumb:hover {
+        background: #666;
+      }
+    </style>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <script src="./js/sunburst.js"></script>
   </head>
   <body>
-    <p id="chart"></p>
+    <section id="sunburst_sect">
+      <h1>
+        Australia overseas migrant arrivals and departures by visa groupings
+        from 2004 to 2021
+      </h1>
+      <div id="sunburst"></div>
+      <script src="./js/sunburst.js"></script>
+    </section>
+    <hr />
+    <section id="map_sect">
+      <h1>
+        Australia migration flow from countries all over the world from 1980 to
+        2008
+      </h1>
+      <div id="map"></div>
+      <div class="slider-container">
+        <label for="year-slider" id="year-slider-label">2000</label>
+        <input
+          type="range"
+          min="1980"
+          max="2008"
+          step="1"
+          value="2000"
+          class="slider"
+          id="year-slider"
+        />
+      </div>
+      <script src="./js/map.js"></script>
+    </section>
+    <hr />
+    <section id="sankey_sect">
+      <h1></h1>
+      <div id="sankey"></div>
+    </section>
+
     <footer style="color: grey">
       COS30045: Data Visualisation<br />Hoang Minh Nguyen
     </footer>
