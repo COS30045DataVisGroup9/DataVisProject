@@ -1,148 +1,152 @@
-// partition
-partition = (data) =>
-  d3.partition().size([2 * Math.PI, radius * radius])(
-    d3
-      .hierarchy(data)
-      .sum((d) => d.value)
-      .sort((a, b) => b.value - a.value)
-  );
+function sunburst() {
+  // partition
+  partition = (data) =>
+    d3.partition().size([2 * Math.PI, radius * radius])(
+      d3
+        .hierarchy(data)
+        .sum((d) => d.value)
+        .sort((a, b) => b.value - a.value)
+    );
 
-// color scheme
-color = d3
-  .scaleOrdinal()
-  .domain(["home", "product", "search", "account", "other", "end"])
-  .range([
-    "#5d85cf",
-    "#4E6E5D",
-    "#7c6561",
-    "#da7847",
-    "#6fb971",
-    "#9e70cf",
-    "#4D5057",
-    "#bbbbbb",
-  ]);
+  // color scheme
+  color = d3
+    .scaleOrdinal()
+    .domain(["home", "product", "search", "account", "other", "end"])
+    .range([
+      "#5d85cf",
+      "#4E6E5D",
+      "#7c6561",
+      "#da7847",
+      "#6fb971",
+      "#9e70cf",
+      "#4D5057",
+      "#bbbbbb",
+    ]);
 
-width = 700;
-radius = width / 2;
+  width = 700;
+  radius = width / 2;
 
-// create arc
-arc = d3
-  .arc()
-  .startAngle((d) => d.x0)
-  .endAngle((d) => d.x1)
-  .padAngle(1 / radius)
-  .padRadius(radius)
-  .innerRadius((d) => Math.sqrt(d.y0))
-  .outerRadius((d) => Math.sqrt(d.y1) - 1);
+  // create arc
+  arc = d3
+    .arc()
+    .startAngle((d) => d.x0)
+    .endAngle((d) => d.x1)
+    .padAngle(1 / radius)
+    .padRadius(radius)
+    .innerRadius((d) => Math.sqrt(d.y0))
+    .outerRadius((d) => Math.sqrt(d.y1) - 1);
 
-// create arc with mouse events
-mousearc = d3
-  .arc()
-  .startAngle((d) => d.x0)
-  .endAngle((d) => d.x1)
-  .innerRadius((d) => Math.sqrt(d.y0))
-  .outerRadius(radius);
-  
-d3.json("../../DataVisProject/Data/Chart_1/visa2021_syd.json").then(function (
-  data
-) {
-  const root = partition(data);
-  const svg = d3.select("#sunburst").append("svg");
+  // create arc with mouse events
+  mousearc = d3
+    .arc()
+    .startAngle((d) => d.x0)
+    .endAngle((d) => d.x1)
+    .innerRadius((d) => Math.sqrt(d.y0))
+    .outerRadius(radius);
 
-  // nodes of the svg
-  const element = svg.node();
-  element.value = { sequence: [], percentage: 0.0 };
+  d3.json("../../DataVisProject/Data/Chart_1/visa2021_syd.json").then(function (
+    data
+  ) {
+    const root = partition(data);
+    const svg = d3.select("#sunburst").append("svg");
 
-  svg
-    .attr("viewBox", `${-radius} ${-radius} ${width} ${width}`)
-    .style("max-width", `${width}px`)
-    .style("font", "12px sans-serif");
+    // nodes of the svg
+    const element = svg.node();
+    element.value = { sequence: [], percentage: 0.0 };
 
-  // labels
-  const label = svg
-    .append("text")
-    .attr("text-anchor", "middle")
-    .attr("fill", "#888")
-    .style("visibility", "hidden");
+    svg
+      .attr("viewBox", `${-radius} ${-radius} ${width} ${width}`)
+      .style("max-width", `${width}px`)
+      .style("font", "12px sans-serif");
 
-  label
-    .append("tspan")
-    .attr("class", "nodename")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("dy", "-1.5em")
-    .attr("font-size", "1.5em")
-    .text("");
+    // labels
+    const label = svg
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("fill", "#888")
+      .style("visibility", "hidden");
 
-  label
-    .append("tspan")
-    .attr("class", "percentage")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("dy", "-0.1em")
-    .attr("font-size", "1.5em")
-    .text("");
+    label
+      .append("tspan")
+      .attr("class", "nodename")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("dy", "-1.5em")
+      .attr("font-size", "1.5em")
+      .text("");
 
-  label
-    .append("tspan")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("dy", "1.5em")
-    .text("of total overseas migrant arrivals and departures");
+    label
+      .append("tspan")
+      .attr("class", "percentage")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("dy", "-0.1em")
+      .attr("font-size", "1.5em")
+      .text("");
 
-  // path
-  const path = svg
-    .append("g")
-    .selectAll("path")
-    .data(
-      root.descendants().filter((d) => {
-        // filter out small nodes
-        return d.depth && d.x1 - d.x0 > 0.001;
+    label
+      .append("tspan")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("dy", "1.5em")
+      .text("of total overseas migrant arrivals and departures");
+
+    // path
+    const path = svg
+      .append("g")
+      .selectAll("path")
+      .data(
+        root.descendants().filter((d) => {
+          // filter out small nodes
+          return d.depth && d.x1 - d.x0 > 0.001;
+        })
+      )
+      .join("path")
+      .attr("fill", (d) => color(d.data.name))
+      .attr("d", arc);
+
+    // events
+    svg
+      .append("g")
+      .attr("fill", "none")
+      .attr("pointer-events", "all")
+      // mouse leave
+      .on("mouseleave", () => {
+        path.attr("fill-opacity", 1);
+        label.style("visibility", "hidden");
+        // update view value
+        element.value = { sequence: [], percentage: 0.0 };
+        element.dispatchEvent(new CustomEvent("input"));
       })
-    )
-    .join("path")
-    .attr("fill", (d) => color(d.data.name))
-    .attr("d", arc);
+      .selectAll("path")
+      .data(
+        root.descendants().filter((d) => {
+          // filter out small nodes
+          return d.depth && d.x1 - d.x0 > 0.001;
+        })
+      )
+      .join("path")
+      .attr("d", mousearc)
+      .on("mouseenter", (event, d) => {
+        // get ancestors of the current segment eliminating root
+        const sequence = d.ancestors().reverse().slice(1);
+        // highlight ancestors
+        path.attr("fill-opacity", (node) =>
+          sequence.indexOf(node) >= 0 ? 1.0 : 0.3
+        );
+        const percentage = ((100 * d.value) / root.value).toPrecision(3);
+        // show labels
+        label
+          .style("visibility", null)
+          .select(".percentage")
+          .text(percentage + "%");
 
-  // events
-  svg
-    .append("g")
-    .attr("fill", "none")
-    .attr("pointer-events", "all")
-    // mouse leave
-    .on("mouseleave", () => {
-      path.attr("fill-opacity", 1);
-      label.style("visibility", "hidden");
-      // update view value
-      element.value = { sequence: [], percentage: 0.0 };
-      element.dispatchEvent(new CustomEvent("input"));
-    })
-    .selectAll("path")
-    .data(
-      root.descendants().filter((d) => {
-        // filter out small nodes
-        return d.depth && d.x1 - d.x0 > 0.001;
-      })
-    )
-    .join("path")
-    .attr("d", mousearc)
-    .on("mouseenter", (event, d) => {
-      // get ancestors of the current segment eliminating root
-      const sequence = d.ancestors().reverse().slice(1);
-      // highlight ancestors
-      path.attr("fill-opacity", (node) =>
-        sequence.indexOf(node) >= 0 ? 1.0 : 0.3
-      );
-      const percentage = ((100 * d.value) / root.value).toPrecision(3);
-      // show labels
-      label
-        .style("visibility", null)
-        .select(".percentage")
-        .text(percentage + "%");
+        label.select(".nodename").text(d.data.name);
+        // update value
+        element.value = { sequence, percentage };
+        element.dispatchEvent(new CustomEvent("input"));
+      });
+  });
+}
 
-      label.select(".nodename").text(d.data.name);
-      // update value
-      element.value = { sequence, percentage };
-      element.dispatchEvent(new CustomEvent("input"));
-    });
-});
+sunburst();
