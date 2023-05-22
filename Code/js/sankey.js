@@ -64,7 +64,6 @@ function sankey() {
     node
       .append("rect")
       .attr("x", function (d) {
-        console.log(d)
         return d.x0;
       })
       .attr("y", function (d) {
