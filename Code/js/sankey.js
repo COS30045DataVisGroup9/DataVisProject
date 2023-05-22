@@ -18,7 +18,6 @@ function sankey() {
     data
   ) {
     graph = sankey(data);
-    console.log(graph.links)
     // create link
     var link = g
       .append("g")

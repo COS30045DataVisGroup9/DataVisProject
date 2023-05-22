@@ -59,13 +59,16 @@ function sunburst() {
       .style("max-width", `${width}px`)
       .style("font", "12px sans-serif");
 
+    var initLabelValue = [
+      "Total overseas migrant",
+      "100%",
+      "of total overseas migrant arrivals and departures",
+    ];
     // labels
     const label = svg
       .append("text")
       .attr("text-anchor", "middle")
-      .attr("fill", "#888")
-      .style("visibility", "hidden");
-
+      .attr("fill", "#888");
     label
       .append("tspan")
       .attr("class", "nodename")
@@ -73,7 +76,7 @@ function sunburst() {
       .attr("y", 0)
       .attr("dy", "-1.5em")
       .attr("font-size", "1.5em")
-      .text("");
+      .text(initLabelValue[0]);
 
     label
       .append("tspan")
@@ -82,14 +85,14 @@ function sunburst() {
       .attr("y", 0)
       .attr("dy", "-0.1em")
       .attr("font-size", "1.5em")
-      .text("");
+      .text(initLabelValue[1]);
 
     label
       .append("tspan")
       .attr("x", 0)
       .attr("y", 0)
       .attr("dy", "1.5em")
-      .text("of total overseas migrant arrivals and departures");
+      .text(initLabelValue[2]);
 
     // path
     const path = svg
@@ -113,10 +116,16 @@ function sunburst() {
       // mouse leave
       .on("mouseleave", () => {
         path.attr("fill-opacity", 1);
-        label.style("visibility", "hidden");
         // update view value
         element.value = { sequence: [], percentage: 0.0 };
         element.dispatchEvent(new CustomEvent("input"));
+
+        // return labels to initial vlaues
+        label
+          .select(".percentage")
+          .text(initLabelValue[1]);
+
+        label.select(".nodename").text(initLabelValue[0]);
       })
       .selectAll("path")
       .data(
