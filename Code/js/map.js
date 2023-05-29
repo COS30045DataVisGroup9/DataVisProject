@@ -77,11 +77,11 @@ function map() {
   );
 
   // inject data to the map
-  d3.csv("../../DataVisProject/Data/Chart_2/migration_flow.csv").then(function (
+  d3.csv("../Data/Chart_2/migration_flow.csv").then(function (
     data
   ) {
     // read json file and bind the data into the path
-    d3.json("../../DataVisProject/Data/Chart_2/countries.geo.json").then(
+    d3.json("../Data/Chart_2/countries.geo.json").then(
       function (json) {
         // create year-slider
         const slider = document.getElementById("year-slider");

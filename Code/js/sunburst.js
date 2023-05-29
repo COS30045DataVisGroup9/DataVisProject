@@ -32,9 +32,7 @@ function sunburst() {
     .innerRadius((d) => Math.sqrt(d.y0))
     .outerRadius(radius);
 
-  d3.json("../../DataVisProject/Data/Chart_1/visa2021_syd.json").then(function (
-    data
-  ) {
+  d3.json("../Data/Chart_1/visa2021_syd.json").then(function (data) {
     const root = partition(data);
     const svg = d3.select("#sunburst").append("svg");
 
@@ -82,7 +80,7 @@ function sunburst() {
       .attr("dy", "1.5em")
       .text(initLabelValue[2]);
 
-    // path
+    // create path
     const path = svg
       .append("g")
       .selectAll("path")
@@ -96,7 +94,7 @@ function sunburst() {
       .attr("fill", (d) => {
         if (d.depth === 1) {
           // for top-level nodes, assign a color from the color scheme directly
-          d.data.color = color(d.data.name)
+          d.data.color = color(d.data.name);
         } else {
           // for leaves, assign a color based on the parent node's color
           d.data.color = d3.interpolateRgb(d.parent.data.color, "white")(0.2);
@@ -105,7 +103,7 @@ function sunburst() {
       })
       .attr("d", arc);
 
-    // events
+    // handle events
     svg
       .append("g")
       .attr("fill", "none")
@@ -143,12 +141,13 @@ function sunburst() {
         label
           .style("visibility", null)
           .select(".percentage")
-          .text(percentage + "%");
+          .text(d.value + " migrants (" + percentage + "%)");
 
         label.select(".nodename").text(d.data.name);
         // update value
         element.value = { sequence, percentage };
         element.dispatchEvent(new CustomEvent("input"));
+
       });
   });
 }
