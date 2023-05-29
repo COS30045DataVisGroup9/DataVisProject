@@ -37,7 +37,7 @@ function sankey() {
     .size([w - padding * 2, h - padding * 2]);
 
   // get sankey json data
-  d3.json("../Data/Chart_3/sankey.json").then((data) => {
+  d3.json("../../DataVisProject/Data/Chart_3/sankey.json").then((data) => {
     // convert negative values to positive values
     data.links.forEach((link) => {
       link.sign = Math.sign(link.value);
