@@ -9,19 +9,19 @@
                     "children": [
                         {
                             "name": "Family",
-                            "value": 3920
+                            "value": 15650
                         },
                         {
                             "name": "Skilled (permanent)",
-                            "value": 3630
+                            "value": 14620
                         },
                         {
                             "name": "Special eligibility and humanitarian",
-                            "value": 150
+                            "value": 590
                         },
                         {
                             "name": "Other (permanent)",
-                            "value": 1300
+                            "value": 6090
                         }
                     ]
                 },
@@ -30,41 +30,41 @@
                     "children": [
                         {
                             "name": "Student - vocational education and training",
-                            "value": 20
+                            "value": 120
                         },
                         {
                             "name": "Student - higher education",
-                            "value": 160
+                            "value": 730
                         },
                         {
                             "name": "Student - other",
-                            "value": 130
+                            "value": 670
                         },
                         {
                             "name": "Skilled (temporary)",
-                            "value": 1400                
+                            "value": 8950                
                         },
                         {
                             "name": "Working holiday",
-                            "value": 160
+                            "value": 1020
                         },
                         {
                             "name": "Visitors",
-                            "value": 1480
+                            "value": 7700
                         },
                         {
                             "name": "Other (temporary)",
-                            "value": 1040
+                            "value": 10390
                         }
                     ]
                 },
                 {
                     "name": "New Zealand citizens (subclass 444)",
-                    "value": 3310
+                    "value": 16950
                 },
                 {
                     "name": "Australian citizens (no visa)",
-                    "value": 10360
+                    "value": 61370
                 }
             ] 
         },
@@ -76,19 +76,19 @@
                     "children": [
                         {
                             "name": "Family",
-                            "value": 1490
+                            "value": 4180
                         },
                         {
                             "name": "Skilled (permanent)",
-                            "value": 2880
+                            "value": 6560
                         },
                         {
                             "name": "Special eligibility and humanitarian",
-                            "value": 20
+                            "value": 80
                         },
                         {
                             "name": "Other (permanent)",
-                            "value": 2640
+                            "value": 7110
                         }
                     ]
                 },
@@ -97,41 +97,41 @@
                     "children": [
                         {
                             "name": "Student - vocational education and training",
-                            "value": 3660
+                            "value": 11060
                         },
                         {
                             "name": "Student - higher education",
-                            "value": 18390
+                            "value": 43580
                         },
                         {
                             "name": "Student - other",
-                            "value": 2620
+                            "value": 7550
                         },
                         {
                             "name": "Skilled (temporary)",
-                            "value": 3330             
+                            "value": 11320           
                         },
                         {
                             "name": "Working holiday",
-                            "value": 2120
+                            "value": 7820
                         },
                         {
                             "name": "Visitors",
-                            "value": 4910
+                            "value": 15020
                         },
                         {
                             "name": "Other (temporary)",
-                            "value": 19560
+                            "value": 50180
                         }
                     ]
                 },
                 {
                     "name": "New Zealand citizens (subclass 444)",
-                    "value": 5380
+                    "value": 19050
                 },
                 {
                     "name": "Australian citizens (no visa)",
-                    "value": 12320
+                    "value": 44010
                 } 
             ] 
         }
