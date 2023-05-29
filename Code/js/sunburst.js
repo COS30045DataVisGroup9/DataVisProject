@@ -9,19 +9,7 @@ function sunburst() {
     );
 
   // color scheme
-  color = d3
-    .scaleOrdinal()
-    .domain(["home", "product", "search", "account", "other", "end"])
-    .range([
-      "#5d85cf",
-      "#4E6E5D",
-      "#7c6561",
-      "#da7847",
-      "#6fb971",
-      "#9e70cf",
-      "#4D5057",
-      "#bbbbbb",
-    ]);
+  color = d3.scaleOrdinal(d3.schemeTableau10);
 
   width = 700;
   radius = width / 2;
@@ -105,7 +93,16 @@ function sunburst() {
         })
       )
       .join("path")
-      .attr("fill", (d) => color(d.data.name))
+      .attr("fill", (d) => {
+        if (d.depth === 1) {
+          // for top-level nodes, assign a color from the color scheme directly
+          d.data.color = color(d.data.name)
+        } else {
+          // for leaves, assign a color based on the parent node's color
+          d.data.color = d3.interpolateRgb(d.parent.data.color, "white")(0.2);
+        }
+        return d.data.color;
+      })
       .attr("d", arc);
 
     // events
@@ -121,9 +118,7 @@ function sunburst() {
         element.dispatchEvent(new CustomEvent("input"));
 
         // return labels to initial vlaues
-        label
-          .select(".percentage")
-          .text(initLabelValue[1]);
+        label.select(".percentage").text(initLabelValue[1]);
 
         label.select(".nodename").text(initLabelValue[0]);
       })
