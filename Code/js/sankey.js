@@ -1,43 +1,109 @@
 function sankey() {
-  var color = d3.scaleOrdinal(d3.schemeCategory10);
+  var w = 1200;
+  var h = 800;
+  var padding = 30;
+  var color = d3.scaleOrdinal(d3.schemeTableau10);
+
+  // generate the gradient id for the sankey link
+  const generateGradientId = (link) => {
+    return `gradient-${link.source.node}-${link.target.node}`;
+  };
 
   // create svg
   var svg = d3
     .select("#sankey")
     .append("svg")
-    .attr("width", 900)
-    .attr("height", 500);
+    .attr("width", w)
+    .attr("height", h);
 
-  var g = svg.append("g").attr("transform", "translate(20, 50)");
+  var g = svg
+    .append("g")
+    .attr("transform", "translate(" + padding + "," + padding + ")");
 
+  svg.call(
+    d3
+      .zoom()
+      .scaleExtent([1, 300])
+      .on("zoom", (event) => {
+        g.attr("transform", event.transform);
+      })
+  );
+  
   // sankey properties
-  var sankey = d3.sankey().nodeWidth(36).nodePadding(40).size([800, 400]);
+  var sankey = d3
+    .sankey()
+    .nodeWidth(36)
+    .nodePadding(40)
+    .size([w - padding * 2, h - padding * 2]);
 
   // get sankey json data
-  d3.json("../../DataVisProject/Data/Chart_3/sankey.json").then(function (
-    data
-  ) {
+  d3.json("../../DataVisProject/Data/Chart_3/sankey.json").then((data) => {
+    // convert negative values to positive values
+    data.links.forEach((link) => {
+      link.sign = Math.sign(link.value);
+      link.value = Math.abs(parseInt(link.value));
+    });
     graph = sankey(data);
+
     // create link
     var link = g
       .append("g")
+      .attr("fill", "none")
       .selectAll("link")
       .data(graph.links)
       .enter()
       .append("path")
       .attr("class", "link")
       .attr("d", d3.sankeyLinkHorizontal())
-      .style("fill", function (d) {
-        return (d.color = color(d.source.name.replace(/ .*/, "")));
-      })
-      .style("opacity", 0.1)
-      .attr("stroke-width", function (d) {
-        return d.width;
-      });
+      .attr(
+        "stroke",
+        (d) => (d.color = color(d.source.name.replace(/ .*/, "")))
+      )
+      .attr("stroke-opacity", 0.5)
+      .attr("stroke-width", (d) => d.width);
 
     // create link tooltip
-    link.append("title").text(function (d) {
-      return d.value;
+    link
+      .append("title")
+      .text(
+        (d) =>
+          "Country: " +
+          d.source.name +
+          "\nState: " +
+          d.target.name +
+          "\nNet Overseas Migration: " +
+          d.value * d.sign +
+          "\nMigration flow: " +
+          d.value
+      );
+
+    // create gradient color for link
+    link.each(function (d, i) {
+      const gradientId = generateGradientId(d);
+
+      // create gradient
+      const gradient = svg
+        .append("linearGradient")
+        .attr("id", gradientId)
+        .attr("gradientUnits", "userSpaceOnUse")
+        .attr("x1", d.source.x1)
+        .attr("x2", d.target.x0);
+
+      // color at the source
+      gradient
+        .append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", color(d.source.name.replace(/ .*/, "")));
+
+      // color ar the target
+      gradient
+        .append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", color(d.target.name.replace(/ .*/, "")));
+
+      d3.select(this)
+        .attr("stroke", `url(#${gradientId})`)
+        .classed("link-gradient", true);
     });
 
     // create node
@@ -51,57 +117,35 @@ function sankey() {
       .call(
         d3
           .drag()
-          .subject(function (d) {
-            return d;
-          })
-          .on("start", function () {
-            this.parentNode.appendChild(this);
-          })
+          .subject((d) => d)
+          .on("start", () => this.parentNode.appendChild(this))
           .on("drag", movenode)
       );
 
     // create the figures for the nodes
     node
       .append("rect")
-      .attr("x", function (d) {
-        return d.x0;
-      })
-      .attr("y", function (d) {
-        return d.y0;
-      })
+      .attr("x", (d) => d.x0)
+      .attr("y", (d) => d.y0)
       .attr("height", function (d) {
         d.rectHeight = d.y1 - d.y0;
-        return d.rectHeight;
+        return d.y1 - d.y0;
       })
       .attr("width", sankey.nodeWidth())
-      .style("fill", function (d) {
-        return (d.color = color(d.name.replace(/ .*/, "")));
-      })
-      .append("title")
-      .text(function (d) {
-        return d.name;
-      });
+      .style("fill", (d) => (d.color = color(d.name.replace(/ .*/, ""))))
+      .attr("stroke", "#000")
+      .append("title");
 
     // create node titles
     node
       .append("text")
-      .attr("x", function (d) {
-        return d.x0 - 6;
-      })
-      .attr("y", function (d) {
-        return (d.y1 + d.y0) / 2;
-      })
-      .attr("dy", "0.35em")
+      .attr("x", (d) => d.x0 - 5)
+      .attr("y", (d) => (d.y1 + d.y0) / 2)
+      .attr("dy", "0.3em")
       .attr("text-anchor", "end")
-      .text(function (d) {
-        return d.name;
-      })
-      .filter(function (d) {
-        return d.x0 < width / 2;
-      })
-      .attr("x", function (d) {
-        return d.x1 + 6;
-      })
+      .text((d) => d.name)
+      .filter((d) => d.x0 < w / 2)
+      .attr("x", (d) => d.x1 + 5)
       .attr("text-anchor", "start");
 
     // moving nodes
@@ -109,7 +153,7 @@ function sankey() {
       d3.select(this)
         .select("rect")
         .attr("y", function (m) {
-          m.y0 = Math.max(0, Math.min(m.y0 + d.dy, 500 - (m.y1 - m.y0)));
+          m.y0 = Math.max(0, Math.min(m.y0 + d.dy, h - (m.y1 - m.y0)));
           m.y1 = m.y0 + m.rectHeight;
 
           return m.y0;
@@ -117,9 +161,7 @@ function sankey() {
 
       d3.select(this)
         .select("text")
-        .attr("y", function (m) {
-          return (m.y0 + m.y1) / 2;
-        });
+        .attr("y", (m) => (m.y0 + m.y1) / 2);
 
       sankey.update(graph);
       link.attr("d", d3.sankeyLinkHorizontal());

@@ -8,26 +8,23 @@
 
     <title>Data Visualisation</title>
     <style>
+      /* map slider */
       .slider-container {
         margin-top: 20px;
-        /* padding-left: 2%; */
       }
 
       .slider {
-        width: 50%;
-        /* margin-left: 5%; */
+        width: 100%;
       }
 
-      /* Styling for the slider track */
-      .slider::-webkit-slider-runnable-track {
+      .slider::-webkit-slider-runnable-track { /* styling for the slider track */
         width: 100%;
         height: 8px;
         background: #ddd;
         border-radius: 4px;
       }
 
-      /* Styling for the slider thumb */
-      .slider::-webkit-slider-thumb {
+      .slider::-webkit-slider-thumb { /* styling for the slider thumb */
         -webkit-appearance: none;
         width: 16px;
         height: 16px;
@@ -36,17 +33,24 @@
         cursor: pointer;
         margin-top: -4px;
       }
-
-      /* Styling for the thumb when active (pressed) */
-      .slider::-webkit-slider-thumb:active {
+      
+      .slider::-webkit-slider-thumb:active { /* styling for the thumb when active (pressed) */
         background: #555;
       }
-
-      /* Styling for the thumb when hovered */
-      .slider::-webkit-slider-thumb:hover {
+      
+      .slider::-webkit-slider-thumb:hover { /* styling for the thumb when hovered */
         background: #666;
       }
 
+      /* map_container */
+      #map_container {
+        display: flex;
+      }
+
+      #line_chart {
+        margin-left: 2%;
+      }
+      /* sankey  */
       .node rect {
         cursor: move;
         fill-opacity: 0.9;
@@ -56,6 +60,16 @@
       .node text {
         pointer-events: none;
         text-shadow: 0 1px 0 #fff;
+      }
+
+      .link {
+        fill: none;
+        stroke-opacity: 0.3;
+      }
+
+      .link:hover {
+        cursor: pointer;
+        stroke-opacity: 0.5;
       }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/d3-color@3"></script>
@@ -86,23 +100,28 @@
         Australian immigration flow from countries all over the world from 1980
         to 2008
       </h1>
-      <div id="map"></div>
-      <div class="slider-container">
-        <label for="year-slider" id="year-slider-label">2000</label>
-        <input
-          type="range"
-          min="1980"
-          max="2008"
-          step="1"
-          value="2000"
-          class="slider"
-          id="year-slider"
-        />
+      <div id="map_container">
+        <div>
+          <div id="map"></div>
+          <div class="slider-container">
+            <label for="year-slider" id="year-slider-label">2000</label>
+            <input
+              type="range"
+              min="1980"
+              max="2008"
+              step="1"
+              value="2000"
+              class="slider"
+              id="year-slider"
+            />
+          </div>
+        </div>
+        <div id="line_chart">
+          <h2 id="line_chart_country"></h2>
+          <p id="line_graph"></p>
+        </div>
       </div>
       <script src="./js/map.js"></script>
-      <div class = "child_divs" id="choropleth_detailed_info">
-        <h3 id="Country"></h2>
-        <p id="detailed_info"></p>
     </div>
     </section>
     <hr />

@@ -1,56 +1,82 @@
 function map() {
+  var w = 800;
+  var h = 600;
+
   // create projection
-  const projection = d3.geoMercator().scale(100);
+  const projection = d3
+    .geoMercator()
+    .translate([w / 2, h / 2])
+    .scale(120);
 
   // create path
   const path = d3.geoPath().projection(projection);
 
   // color scheme
-  var color = d3
-    .scaleQuantize()
-    .domain([0, 10000])
-    .range(["#f2f0f7", "#cbc9e2", "#9e9ac8", "#756bb1", "#54278f"]);
+  const color = d3
+    .scaleThreshold()
+    .domain([1000, 10000, 20000, 30000, 40000, 50000, 80000])
+    .range([
+      "#d6e2e7",
+      "#adc5ce",
+      "#99b6c2",
+      "#84a7b6",
+      "#5b8a9d",
+      "#477c91",
+      "#326d85",
+    ]);
 
   // set up map svg
   const svg = d3
     .select("#map")
     .append("svg")
-    .attr("width", 900)
-    .attr("height", 600)
+    .attr("width", w)
+    .attr("height", h)
+    .attr("style", "border: 1px solid;")
     .attr("fill", "grey");
+
+  var g = svg.append("g").attr("transform", `translate(0,80)`);
 
   // appending the color legend
   svg
     .append("g")
     .attr("class", "legend")
-    .attr("transform", "translate(30,300)");
-
-  // appending labels for color legend
-  svg
-    .append("text")
-    .attr("y", 260)
-    .attr("x", 50)
-    .text("Immigration flow")
-    .style("font-family", "Arial")
-    .style("fill", "black");
+    .attr("transform", "translate(20, 350)");
 
   // color legend
   const legend = d3
     .legendColor()
     .shapeWidth(30)
-    .cells([120, 125, 158, 175, 187, 205, 223, 239])
+    .cells([0, 1000, 10000, 20000, 30000, 40000, 50000, 80000])
+    // providing labels for the legend
+    .labels([
+      "< 1000",
+      "1000 to 10000",
+      "10000 to 20000",
+      "20000 to 30000",
+      "30000 to 40000",
+      "40000 to 50000",
+      "> 50000",
+    ])
     .orient("vertical")
     .scale(color);
 
   svg
     .select(".legend")
     .call(legend)
-    .style("font-family", "Arial")
     .style("fill", "black")
-    .style("font-size", 13);
+    .style("font-size", 12);
 
-  var g = svg.append("g").attr("transform", `translate(0,${20})`);
+  // zoom function
+  svg.call(
+    d3
+      .zoom()
+      .scaleExtent([1, 5])
+      .on("zoom", (event) => {
+        g.attr("transform", event.transform);
+      })
+  );
 
+  // inject data to the map
   d3.csv("../../DataVisProject/Data/Chart_2/migration_flow.csv").then(function (
     data
   ) {
@@ -60,9 +86,8 @@ function map() {
         // create year-slider
         const slider = document.getElementById("year-slider");
         slider.addEventListener("input", function () {
-          const selectedYear = parseInt(this.value);
           // update map in the selected year
-          updateMap(selectedYear);
+          updateMap(parseInt(this.value));
         });
 
         // show the map
@@ -88,23 +113,39 @@ function map() {
               .transition()
               .duration(200)
               .style("opacity", 1);
-            d3.select(this)
-              .style("opacity", 1)
-              .append("title")
-              .text(
-                "Country Name: " +
-                  d.properties.name +
-                  "\nImmgiration flow: " +
-                  data.find((e) => d.id == e.CODE)[slider.value]
-              );
+
+            // initiate tooltip title
+            var tooltipTitle =
+              "Country Name: " + d.properties.name + "\nImmigration flow: ";
+
+            // check if the country exist
+            var country = data.find((e) => d.id == e.CODE);
+            if (country != undefined) {
+              // update title
+              tooltipTitle += country[slider.value];
+            } else {
+              tooltipTitle += "0";
+            }
+
+            // check if title does not exist
+            if (d3.select(this).select("title").empty()) {
+              d3.select(this)
+                .append("title") // append new title
+                .text(tooltipTitle);
+            } else {
+              d3.select(this)
+                .select("title") // select existing title
+                .text(tooltipTitle);
+            }
+            lineChart(d, data);
           }) // mouse over trigger
           .on("mouseleave", function (event, d) {
             d3.selectAll(".country")
               .transition()
               .duration(200)
               .style("opacity", 1); // unfade countries
+            HideLineChart();
           }); // mouse out trigger
-        g.attr("transform", `translate(0,${100})`);
 
         // initialise the map at the initial year
         updateMap(parseInt(slider.value));
@@ -112,7 +153,7 @@ function map() {
         // update the countries' color when update the slider
         function updateMap(selectedYear) {
           svg.selectAll("path").style("fill", function (d) {
-            country = data.find((e) => d.id == e.CODE);
+            const country = findCountry(d, data);
             // change the label
             document.getElementById("year-slider-label").innerHTML =
               selectedYear;
@@ -126,6 +167,161 @@ function map() {
       }
     );
   });
+}
+
+function lineChart(d, data) {
+  // show the line chart
+  ShowLineChart();
+
+  // remove svg
+  d3.selectAll("#line_graph > *").remove();
+
+  // change the headings
+  document.getElementById("line_chart_country").innerHTML = d.properties.name
+
+  // set up the dataset
+  const country = findCountry(d, data);
+  if (country) {
+    const dataset = Object.entries(country)
+      .filter(([key]) => !isNaN(key)) // filter all values that's not number
+      .map(([year, value]) => [year, parseInt(value)]); // change data to int
+
+    // axis label
+    const xAxisLabel = "Year";
+    const yAxisLabel = "Immigration Flow";
+
+    // convert year string to date
+    const parseTime = d3.timeParse("%Y");
+
+    // set padding, width and height for line graph
+    var padding = 60;
+    var w = 600;
+    var h = 400;
+
+    // create svg for line chart
+    var svg = d3
+      .select("#line_graph")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h)
+      .attr("fill", "none");
+
+    // create x scale
+    var xScale = d3
+      .scaleTime() // scale time for the year
+      .domain([
+        d3.min(dataset, function (d) {
+          return parseTime(d[0]);
+        }),
+        d3.max(dataset, function (d) {
+          return parseTime(d[0]);
+        }),
+      ])
+      .range([padding, w - padding]);
+
+    // create y scale
+    var yScale = d3
+      .scaleLinear() // scale immigration flow value
+      .domain([
+        0,
+        d3.max(dataset, function (d) {
+          return parseInt(d[1]);
+        }),
+      ])
+      .range([h - padding, padding])
+      .nice()
+      ;
+    // create x axis
+    var xAxis = d3.axisBottom().scale(xScale);
+
+    // create y axis
+    var yAxis = d3.axisLeft().scale(yScale).ticks(5);
+
+    svg
+      .append("g")
+      .attr("class", "xAxis") // x axis has class xAxis
+      .attr("transform", "translate(0, " + (h - padding) + ")") // add some padding
+      .call(xAxis); // call x axis
+
+    svg
+      .append("g")
+      .attr("class", "yAxis") // y axis has class yAxis
+      .attr("transform", "translate(" + padding + ", 0)") // add some padding
+      .call(yAxis); // call y axis
+
+    // create x axis label
+    d3.select(".xAxis")
+      .append("text")
+      .attr("x", w / 2)
+      .attr("y", 40)
+      .attr("fill", "black")
+      .attr("text-anchor", "middle")
+      .text(xAxisLabel);
+    
+    // create y axis label
+    d3.select(".yAxis")
+      .append("text")
+      .attr("y", padding - 10)
+      .attr("x", -20)
+      .attr("fill", "black")
+      .attr("text-anchor", "middle")
+      .text(yAxisLabel);
+
+    // create line
+    var line = d3
+      .line()
+      .x(function (d) {
+        return xScale(parseTime(d[0]));
+      }) 
+      .y(function (d) {
+        return yScale(d[1]);
+      });
+
+    // create path
+    svg
+      .append("path")
+      .datum(dataset) // attach each data in the dataset to a path
+      .attr("class", "line") // path has class line
+      .attr("d", line)
+      .style("stroke", "#000")
+      .style("stroke-width", "1.5px");
+
+    // create area
+    var area = d3
+      .area()
+      .x(function (d) {
+        return xScale(parseTime(d[0]));
+      }) // value of date
+      .y0(function () {
+        return yScale.range()[0];
+      }) // the min value of yScale
+      .y1(function (d) {
+        return yScale(d[1]);
+      }); // the value of yScale that matches immigration flow value
+
+    svg
+      .append("path")
+      .datum(dataset) // attach each data in the dataset to a path
+      .attr("class", "area") // path has class area
+      .attr("d", area)
+      .style("fill", "#b69384");
+  }
+}
+
+function ShowLineChart() {
+  //Display the additional graph
+  var chart = document.getElementById("line_chart");
+  chart.style.display = "block";
+}
+
+function HideLineChart() {
+  //Hide the additional graph
+  var chart = document.getElementById("line_chart");
+  chart.style.display = "none";
+}
+
+function findCountry(d, data) {
+  return data.find((e) => d.id == e.CODE);
 }
 
 map();
