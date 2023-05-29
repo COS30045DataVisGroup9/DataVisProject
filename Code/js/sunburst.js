@@ -32,7 +32,7 @@ function sunburst() {
     .innerRadius((d) => Math.sqrt(d.y0))
     .outerRadius(radius);
 
-  d3.json("../Data/Chart_1/visa2021_syd.json").then(function (
+  d3.json("../../DataVisProject/Data/Chart_1/visa2021_syd.json").then(function (
     data
   ) {
     const root = partition(data);
