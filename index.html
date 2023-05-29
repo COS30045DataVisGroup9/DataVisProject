@@ -10,7 +10,7 @@
     <style>
       /* map slider */
       .slider-container {
-        margin-top: 20px;
+        margin-bottom: 20px;
       }
 
       .slider {
@@ -92,7 +92,7 @@
         from 2004 to 2021
       </h1>
       <div id="sunburst"></div>
-      <script src="./js/sunburst.js"></script>
+      <script src="./Code/js/sunburst.js"></script>
     </section>
     <hr />
     <section id="map_sect">
@@ -102,9 +102,8 @@
       </h1>
       <div id="map_container">
         <div>
-          <div id="map"></div>
           <div class="slider-container">
-            <label for="year-slider" id="year-slider-label">2000</label>
+            <div>Year: <span for="year-slider" id="year-slider-label">2000</span></div>
             <input
               type="range"
               min="1980"
@@ -115,13 +114,14 @@
               id="year-slider"
             />
           </div>
+          <div id="map"></div>
         </div>
         <div id="line_chart">
           <h2 id="line_chart_country"></h2>
           <p id="line_graph"></p>
         </div>
       </div>
-      <script src="./js/map.js"></script>
+      <script src="./Code/js/map.js"></script>
     </div>
     </section>
     <hr />
@@ -131,7 +131,7 @@
       </h1>
       <div id="sankey"></div>
       <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
-      <script src="./js/sankey.js"></script>
+      <script src="./Code/js/sankey.js"></script>
     </section>
 
     <footer style="color: grey">
