@@ -32,7 +32,7 @@ function sunburst() {
     .innerRadius((d) => Math.sqrt(d.y0))
     .outerRadius(radius);
 
-  d3.json("../../DataVisProject/Data/Chart_1/visa2021.json").then(function (data) {
+  d3.json("../../DataVisProject/Data/Chart_2/visa2021.json").then(function (data) {
     const root = partition(data);
     const svg = d3.select("#sunburst").append("svg");
 
@@ -46,9 +46,9 @@ function sunburst() {
       .style("font", "12px sans-serif");
 
     var initLabelValue = [
-      "Total overseas migrant",
+      "Total overseas migrants",
       "100%",
-      "of total overseas migrant arrivals and departures",
+      "of total overseas migrants",
     ];
     // labels
     const label = svg
