@@ -32,7 +32,7 @@ function sunburst() {
     .innerRadius((d) => Math.sqrt(d.y0))
     .outerRadius(radius);
 
-  d3.json("../../DataVisProject/Data/Chart_1/visa2021.json").then(function (data) {
+  d3.json("../../Data/Chart_1/visa2021.json").then(function (data) {
     const root = partition(data);
     const svg = d3.select("#sunburst").append("svg");
 
