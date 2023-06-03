@@ -2,7 +2,7 @@
     "name": "root",
     "children": [
         {
-            "name": "Overseas migrant arrivals",
+            "name": "Overseas immigrants",
             "children": [
                 {
                     "name": "Permanent visas",
@@ -69,7 +69,7 @@
             ] 
         },
         {
-            "name": "Overseas migrant departures",
+            "name": "Overseas emigrants",
             "children": [
                 {
                     "name": "Permanent visas",

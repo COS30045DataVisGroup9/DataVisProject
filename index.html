@@ -7,71 +7,7 @@
     <meta name="author" content="Hoang Minh Nguyen" />
 
     <title>Data Visualisation</title>
-    <style>
-      /* map slider */
-      .slider-container {
-        margin-bottom: 20px;
-      }
-
-      .slider {
-        width: 100%;
-      }
-
-      .slider::-webkit-slider-runnable-track { /* styling for the slider track */
-        width: 100%;
-        height: 8px;
-        background: #ddd;
-        border-radius: 4px;
-      }
-
-      .slider::-webkit-slider-thumb { /* styling for the slider thumb */
-        -webkit-appearance: none;
-        width: 16px;
-        height: 16px;
-        background: #333;
-        border-radius: 50%;
-        cursor: pointer;
-        margin-top: -4px;
-      }
-      
-      .slider::-webkit-slider-thumb:active { /* styling for the thumb when active (pressed) */
-        background: #555;
-      }
-      
-      .slider::-webkit-slider-thumb:hover { /* styling for the thumb when hovered */
-        background: #666;
-      }
-
-      /* map_container */
-      #map_container {
-        display: flex;
-      }
-
-      #line_chart {
-        margin-left: 2%;
-      }
-      /* sankey  */
-      .node rect {
-        cursor: move;
-        fill-opacity: 0.9;
-        shape-rendering: crispEdges;
-      }
-
-      .node text {
-        pointer-events: none;
-        text-shadow: 0 1px 0 #fff;
-      }
-
-      .link {
-        fill: none;
-        stroke-opacity: 0.3;
-      }
-
-      .link:hover {
-        cursor: pointer;
-        stroke-opacity: 0.5;
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="./Code/css/index.css"/>
     <script src="https://cdn.jsdelivr.net/npm/d3-color@3"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-dispatch@3"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-ease@3"></script>
@@ -88,10 +24,9 @@
   <body>
     <section id="map_sect">
       <h1>
-        Australian immigration flow from countries all over the world from 1980
-        to 2008
+        Australian migration flow from countries all over the world from 1980 to 2008
       </h1>
-      <div id="map_container">
+      <div class="container">
         <div>
           <div class="slider-container">
             <div>Year: <span for="year-slider" id="year-slider-label">2000</span></div>
@@ -107,9 +42,19 @@
           </div>
           <div id="map"></div>
         </div>
-        <div id="line_chart">
-          <h2 id="line_chart_country"></h2>
-          <p id="line_graph"></p>
+        <div class="side">
+          <p class="note">
+            The visualisation describes the migration flow from and to Australia in the 1980 - 2008 period.
+            Migration flow consists of both inflow (immigration) and outflow (emigration).         
+          </p>
+          <ul class="feature">
+            <li>Hover on a country to see the migration flow trend of that country from 1980 to 2008.</li>
+            <li>Swipe left or right of the slider above the map to see the migration flow in different years. Zoom in the map to see small regions.</li>
+          </ul>   
+          <div id="line_chart">
+            <h2 id="line_chart_country"></h2>
+            <p id="line_graph"></p>
+          </div>
         </div>
       </div>
       <script src="./Code/js/map.js"></script>
@@ -118,9 +63,23 @@
     <hr />
     <section id="sunburst_sect">
       <h1>
-        Australia overseas migrant arrivals and departures by visa groupings in 2021
+        Australia overseas immigration and emigration by visa groupings in 2021
       </h1>
-      <div id="sunburst"></div>
+      <div class="container">
+        <div>
+          <div id="sunburst"></div> 
+        </div>
+        <div class="side">
+          <p class="note">
+            The visualisation describes the number of immigrants and emigrants categorised by visa groups in 2021.
+            Based on the types of visa, we can analyse the main reasons that people have been coming to and leaving from Australia.
+          </p>
+          <ul class="feature">
+            <li>Hover on a category to see the number of migrants belonging to that category</li>
+          </ul>   
+        </div>    
+      </div>
+
       <script src="./Code/js/sunburst.js"></script>
     </section>
     <hr />
@@ -128,12 +87,26 @@
       <h1>
         Net overseas migration of selected countries by Australia states in 2021
       </h1>
+      <p class="note" id="sankey_note">
+        The visualisation show net overseas migration value of ten countries categorised by Australia states in 2021.
+        Net overseas migration (NOM) refers to the net increase or decrease in population resulting from the inflow of immigrants to Australia and the outflow of emigrants from Australia.
+        NOM is calculated by subtracting the total number of permanent and long-term departures from the total number of permanent and long-term arrivals.
+      </p>
+      <ul class="feature" id="sankey_feature">
+        <li>Hover on a link to see the exact NOM value</li>
+        <li>Zoom in or move the node on two sides to see thin links</li>
+      </ul>   
       <div id="sankey"></div>
       <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
       <script src="./Code/js/sankey.js"></script>
     </section>
     <footer style="color: grey">
-      COS30045: Data Visualisation<br />Hoang Minh Nguyen
+      COS30045: Data Visualisation Process Book
+      <br />
+      <div class="container">
+        <span class="footer_name">Hoang Minh Nguyen - 103166280</span>
+        <span class="footer_name">Sohan Saidy Badhon - 103802982</span>
+      </div>
     </footer>
   </body>
 </html>

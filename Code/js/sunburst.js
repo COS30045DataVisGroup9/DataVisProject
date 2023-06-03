@@ -11,7 +11,7 @@ function sunburst() {
   // color scheme
   color = d3.scaleOrdinal(d3.schemeTableau10);
 
-  width = 700;
+  width = 620;
   radius = width / 2;
 
   // create arc
@@ -32,7 +32,7 @@ function sunburst() {
     .innerRadius((d) => Math.sqrt(d.y0))
     .outerRadius(radius);
 
-  d3.json("../../Data/Chart_1/visa2021.json").then(function (data) {
+  d3.json("../../Data/Chart_2/visa2021.json").then(function (data) {
     const root = partition(data);
     const svg = d3.select("#sunburst").append("svg");
 
@@ -42,26 +42,26 @@ function sunburst() {
 
     svg
       .attr("viewBox", `${-radius} ${-radius} ${width} ${width}`)
-      .style("max-width", `${width}px`)
-      .style("font", "12px sans-serif");
+      .style("width", `${width}px`);
 
     var initLabelValue = [
-      "Total overseas migrant",
+      "Total overseas migrants",
       "100%",
-      "of total overseas migrant arrivals and departures",
+      "of total overseas migrants",
     ];
     // labels
     const label = svg
       .append("text")
       .attr("text-anchor", "middle")
       .attr("fill", "#888");
+
     label
       .append("tspan")
       .attr("class", "nodename")
       .attr("x", 0)
       .attr("y", 0)
       .attr("dy", "-1.5em")
-      .attr("font-size", "1.5em")
+      .attr("font-size", "1.1em")
       .text(initLabelValue[0]);
 
     label
@@ -70,14 +70,15 @@ function sunburst() {
       .attr("x", 0)
       .attr("y", 0)
       .attr("dy", "-0.1em")
-      .attr("font-size", "1.5em")
+      .attr("font-size", "1.1em")
       .text(initLabelValue[1]);
 
     label
       .append("tspan")
       .attr("x", 0)
       .attr("y", 0)
-      .attr("dy", "1.5em")
+      .attr("dy", "1.2em")
+      .attr("font-size", "1.1em")
       .text(initLabelValue[2]);
 
     // create path

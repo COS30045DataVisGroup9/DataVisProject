@@ -1,5 +1,5 @@
 function sankey() {
-  var w = 1200;
+  var w = 1450;
   var h = 800;
   var padding = 30;
   var color = d3.scaleOrdinal(d3.schemeTableau10);
@@ -14,7 +14,8 @@ function sankey() {
     .select("#sankey")
     .append("svg")
     .attr("width", w)
-    .attr("height", h);
+    .attr("height", h)
+    .attr("style", "border: 1px solid;");
 
   var g = svg
     .append("g")
@@ -28,7 +29,7 @@ function sankey() {
         g.attr("transform", event.transform);
       })
   );
-  
+
   // sankey properties
   var sankey = d3
     .sankey()
@@ -63,19 +64,14 @@ function sankey() {
       .attr("stroke-width", (d) => d.width);
 
     // create link tooltip
-    link
-      .append("title")
-      .text(
-        (d) =>
-          "Country: " +
-          d.source.name +
-          "\nState: " +
-          d.target.name +
-          "\nNet Overseas Migration: " +
-          d.value * d.sign +
-          "\nMigration flow: " +
-          d.value
-      );
+    link.append("title").text((d) => {
+      const tooltipText = [
+        "Country: " + d.source.name,
+        "State: " + d.target.name,
+        "Net Overseas Migration: " + d.value * d.sign,
+      ].join("\n");
+      return tooltipText;
+    });
 
     // create gradient color for link
     link.each(function (d, i) {

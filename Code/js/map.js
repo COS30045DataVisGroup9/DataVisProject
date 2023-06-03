@@ -14,8 +14,9 @@ function map() {
   // color scheme
   const color = d3
     .scaleThreshold()
-    .domain([1000, 10000, 20000, 30000, 40000, 50000, 80000])
+    .domain([0, 1000, 10000, 20000, 30000, 40000, 50000, 80000])
     .range([
+      "#5f5f5f",
       "#d6e2e7",
       "#adc5ce",
       "#99b6c2",
@@ -46,9 +47,10 @@ function map() {
   const legend = d3
     .legendColor()
     .shapeWidth(30)
-    .cells([0, 1000, 10000, 20000, 30000, 40000, 50000, 80000])
+    .cells([-1, 0, 1000, 10000, 20000, 30000, 40000, 50000, 80000])
     // providing labels for the legend
     .labels([
+      "Missing data",
       "< 1000",
       "1000 to 10000",
       "10000 to 20000",
@@ -77,95 +79,90 @@ function map() {
   );
 
   // inject data to the map
-  d3.csv("../../Data/Chart_2/migration_flow.csv").then(function (
-    data
-  ) {
+  d3.csv("../../Data/Chart_1/migration_flow.csv").then(function (data) {
     // read json file and bind the data into the path
-    d3.json("../../Data/Chart_2/countries.geo.json").then(
-      function (json) {
-        // create year-slider
-        const slider = document.getElementById("year-slider");
-        slider.addEventListener("input", function () {
-          // update map in the selected year
-          updateMap(parseInt(this.value));
+    d3.json("../../Data/Chart_1/countries.geo.json").then(function (json) {
+      // create year-slider
+      const slider = document.getElementById("year-slider");
+      slider.addEventListener("input", function () {
+        // update map in the selected year
+        updateMap(parseInt(this.value));
+      });
+
+      // show the map
+      g.selectAll("path")
+        .data(json.features) // take the data from json file
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr("class", function (d) {
+          return "country";
+        })
+        .style("stroke", "black") // show the border of countries
+        .style("stroke-width", 0.5)
+        // event
+        .on("mouseover", function (event, d) {
+          // highlight countries
+          d3.selectAll(".country")
+            .transition()
+            .duration(200)
+            .style("opacity", 0.4); // fade countries
+
+          d3.select(this) // highlight selected country
+            .transition()
+            .duration(200)
+            .style("opacity", 1);
+
+          // initiate tooltip title
+          var tooltipTitle =
+            "Country Name: " + d.properties.name + "\nImmigration flow: ";
+
+          // check if the country exist
+          var country = data.find((e) => d.id == e.CODE);
+          if (country != undefined) {
+            // update title
+            tooltipTitle += country[slider.value];
+          } else {
+            tooltipTitle += "Missing data"; // title for data missing
+          }
+
+          // check if title does not exist
+          if (d3.select(this).select("title").empty()) {
+            d3.select(this)
+              .append("title") // append new title
+              .text(tooltipTitle);
+          } else {
+            d3.select(this)
+              .select("title") // select existing title
+              .text(tooltipTitle);
+          }
+          lineChart(d, data);
+        }) // mouse over event
+        .on("mouseleave", function (event, d) {
+          d3.selectAll(".country")
+            .transition()
+            .duration(200)
+            .style("opacity", 1); // unfade countries
+          HideLineChart();
+        }); // mouse out event
+
+      // initialise the map at the initial year
+      updateMap(parseInt(slider.value));
+
+      // update the countries' color when update the slider
+      function updateMap(selectedYear) {
+        svg.selectAll("path").style("fill", function (d) {
+          const country = findCountry(d, data);
+          // change the label
+          document.getElementById("year-slider-label").innerHTML = selectedYear;
+          if (!country) {
+            return color(-1);
+          }
+          // return new color
+          return color(country[selectedYear]);
         });
-
-        // show the map
-        g.selectAll("path")
-          .data(json.features) // take the data from json file
-          .enter()
-          .append("path")
-          .attr("d", path)
-          .attr("class", function (d) {
-            return "country";
-          })
-          .style("stroke", "black") // show the border of countries
-          .style("stroke-width", 0.5)
-          // event
-          .on("mouseover", function (event, d) {
-            // highlight countries
-            d3.selectAll(".country")
-              .transition()
-              .duration(200)
-              .style("opacity", 0.4); // fade countries
-
-            d3.select(this) // highlight selected country
-              .transition()
-              .duration(200)
-              .style("opacity", 1);
-
-            // initiate tooltip title
-            var tooltipTitle =
-              "Country Name: " + d.properties.name + "\nImmigration flow: ";
-
-            // check if the country exist
-            var country = data.find((e) => d.id == e.CODE);
-            if (country != undefined) {
-              // update title
-              tooltipTitle += country[slider.value];
-            } else {
-              tooltipTitle += "0";
-            }
-
-            // check if title does not exist
-            if (d3.select(this).select("title").empty()) {
-              d3.select(this)
-                .append("title") // append new title
-                .text(tooltipTitle);
-            } else {
-              d3.select(this)
-                .select("title") // select existing title
-                .text(tooltipTitle);
-            }
-            lineChart(d, data);
-          }) // mouse over trigger
-          .on("mouseleave", function (event, d) {
-            d3.selectAll(".country")
-              .transition()
-              .duration(200)
-              .style("opacity", 1); // unfade countries
-            HideLineChart();
-          }); // mouse out trigger
-
-        // initialise the map at the initial year
-        updateMap(parseInt(slider.value));
-
-        // update the countries' color when update the slider
-        function updateMap(selectedYear) {
-          svg.selectAll("path").style("fill", function (d) {
-            const country = findCountry(d, data);
-            // change the label
-            document.getElementById("year-slider-label").innerHTML =
-              selectedYear;
-            if (!country) {
-              return color(0);
-            }
-            // return new color
-            return color(country[selectedYear]);
-          });
-        }
       }
-    );
+    });
   });
 }
 
@@ -177,11 +174,13 @@ function lineChart(d, data) {
   d3.selectAll("#line_graph > *").remove();
 
   // change the headings
-  document.getElementById("line_chart_country").innerHTML = d.properties.name
+  document.getElementById("line_chart_country").innerHTML = d.properties.name;
 
   // set up the dataset
   const country = findCountry(d, data);
   if (country) {
+    // clear existing data
+    document.getElementById("line_graph").innerHTML = "";
     const dataset = Object.entries(country)
       .filter(([key]) => !isNaN(key)) // filter all values that's not number
       .map(([year, value]) => [year, parseInt(value)]); // change data to int
@@ -229,8 +228,7 @@ function lineChart(d, data) {
         }),
       ])
       .range([h - padding, padding])
-      .nice()
-      ;
+      .nice();
     // create x axis
     var xAxis = d3.axisBottom().scale(xScale);
 
@@ -257,7 +255,7 @@ function lineChart(d, data) {
       .attr("fill", "black")
       .attr("text-anchor", "middle")
       .text(xAxisLabel);
-    
+
     // create y axis label
     d3.select(".yAxis")
       .append("text")
@@ -272,7 +270,7 @@ function lineChart(d, data) {
       .line()
       .x(function (d) {
         return xScale(parseTime(d[0]));
-      }) 
+      })
       .y(function (d) {
         return yScale(d[1]);
       });
@@ -305,6 +303,9 @@ function lineChart(d, data) {
       .attr("class", "area") // path has class area
       .attr("d", area)
       .style("fill", "#b69384");
+  } else {
+    // no data appear because of missing data
+    document.getElementById("line_graph").innerHTML = "Missing data";
   }
 }
 

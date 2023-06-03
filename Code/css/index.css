@@ -1,0 +1,99 @@
+body {
+    padding: 0 1%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+h1 {
+    margin-bottom: 2%;
+}
+.container {
+    display: flex;
+}
+.side {
+    width: 100%;
+    margin: 1%;
+}
+.note {
+    background-color: #fffaa1;
+    border: 1px solid #d8d8d8;
+    padding: 2.5% 3%;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.note, .feature {
+    word-wrap: break-word;
+    text-align: justify;
+    padding-right: 3%;
+}
+footer {
+    margin-top: 2%;       
+}
+.footer_name {
+    width : 50%;
+}
+/* map slider */
+.slider-container {
+    margin-bottom: 20px;
+    font-size: 1.2em;
+}
+.slider {
+    width: 100%;
+}
+.slider::-webkit-slider-runnable-track {
+   /* styling for the slider track */
+    width: 100%;
+    height: 8px;
+    background: #ddd;
+    border-radius: 4px;
+}
+.slider::-webkit-slider-thumb {
+   /* styling for the slider thumb */
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #333;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -4px;
+}
+.slider::-webkit-slider-thumb:active {
+   /* styling for the thumb when active (pressed) */
+    background: #555;
+}
+.slider::-webkit-slider-thumb:hover {
+   /* styling for the thumb when hovered */
+    background: #666;
+}
+/* line chart */
+#line_chart {
+    margin-left: 2%;
+}
+/* sankey */
+#sankey {
+    display: flex;
+    justify-content: center;
+}
+#sankey_note {
+    width: 92%;
+    margin: 0 2%;
+    padding: 2%;
+}
+#sankey_feature {
+    margin-left: 2%;
+}
+.node rect {
+    cursor: move;
+    fill-opacity: 0.9;
+    shape-rendering: crispEdges;
+}
+.node text {
+    pointer-events: none;
+    text-shadow: 0 1px 0 #fff;
+}
+.link {
+    fill: none;
+    stroke-opacity: 0.3;
+}
+.link:hover {
+    cursor: pointer;
+    stroke-opacity: 0.5;
+}
