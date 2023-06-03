@@ -1,6 +1,6 @@
 function map() {
   var w = 800;
-  var h = 600;
+  var h = 650;
 
   // create projection
   const projection = d3
