@@ -115,7 +115,7 @@ function map() {
 
           // initiate tooltip title
           var tooltipTitle =
-            "Country Name: " + d.properties.name + "\nImmigration flow: ";
+            "Country Name: " + d.properties.name + "<br/>Immigration flow: ";
 
           // check if the country exist
           var country = data.find((e) => d.id == e.CODE);
@@ -125,17 +125,7 @@ function map() {
           } else {
             tooltipTitle += "Missing data"; // title for data missing
           }
-
-          // check if title does not exist
-          if (d3.select(this).select("title").empty()) {
-            d3.select(this)
-              .append("title") // append new title
-              .text(tooltipTitle);
-          } else {
-            d3.select(this)
-              .select("title") // select existing title
-              .text(tooltipTitle);
-          }
+          ShowMapTooltip(event, tooltipTitle);
           lineChart(d, data);
         }) // mouse over event
         .on("mouseleave", function (event, d) {
@@ -143,6 +133,7 @@ function map() {
             .transition()
             .duration(200)
             .style("opacity", 1); // unfade countries
+          HideMapTooltip();
           HideLineChart();
         }); // mouse out event
 
@@ -152,7 +143,7 @@ function map() {
       // update the countries' color when update the slider
       function updateMap(selectedYear) {
         svg.selectAll("path").style("fill", function (d) {
-          const country = findCountry(d, data);
+          const country = FindCountry(d, data);
           // change the label
           document.getElementById("year-slider-label").innerHTML = selectedYear;
           if (!country) {
@@ -177,7 +168,7 @@ function lineChart(d, data) {
   document.getElementById("line_chart_country").innerHTML = d.properties.name;
 
   // set up the dataset
-  const country = findCountry(d, data);
+  const country = FindCountry(d, data);
   if (country) {
     // clear existing data
     document.getElementById("line_graph").innerHTML = "";
@@ -321,8 +312,23 @@ function HideLineChart() {
   chart.style.display = "none";
 }
 
-function findCountry(d, data) {
+function FindCountry(d, data) {
   return data.find((e) => d.id == e.CODE);
+}
+
+function ShowMapTooltip(event, text) {
+  var tooltip = d3.select("#map_tooltip");
+  var [x, y] = d3.pointer(event);
+  tooltip.transition().duration(200).style("opacity", 1);
+  tooltip
+    .html(text)
+    .style("left", x + "px")
+    .style("top", y + "px");
+}
+
+function HideMapTooltip() {
+  var tooltip = d3.select("#map_tooltip");
+  tooltip.transition().duration(200).style("opacity", 0);
 }
 
 map();

@@ -61,17 +61,27 @@ function sankey() {
         (d) => (d.color = color(d.source.name.replace(/ .*/, "")))
       )
       .attr("stroke-opacity", 0.5)
-      .attr("stroke-width", (d) => d.width);
-
+      .attr("stroke-width", (d) => d.width)
+      .on("mouseover", function (event, d) {
+        const tooltipText = [
+          "Country: " + d.source.name,
+          "State: " + d.target.name,
+          "Net Overseas Migration: " + d.value * d.sign,
+        ].join("<br/>");
+        ShowSankeyTooltip(event, tooltipText);
+      })
+      .on("mouseleave", function (event, d) {
+        HideSankeyTooltip();
+      });
     // create link tooltip
-    link.append("title").text((d) => {
-      const tooltipText = [
-        "Country: " + d.source.name,
-        "State: " + d.target.name,
-        "Net Overseas Migration: " + d.value * d.sign,
-      ].join("\n");
-      return tooltipText;
-    });
+    // link.append("title").text((d) => {
+    //   const tooltipText = [
+    //     "Country: " + d.source.name,
+    //     "State: " + d.target.name,
+    //     "Net Overseas Migration: " + d.value * d.sign,
+    //   ].join("\n");
+    //   return tooltipText;
+    // });
 
     // create gradient color for link
     link.each(function (d, i) {
@@ -163,6 +173,22 @@ function sankey() {
       link.attr("d", d3.sankeyLinkHorizontal());
     }
   });
+}
+
+function ShowSankeyTooltip(event, text) {
+  var tooltip = d3.select("#sankey_tooltip");
+  var [x, y] = d3.pointer(event);
+  console.log(tooltip);
+  tooltip.transition().duration(200).style("opacity", 1);
+  tooltip
+    .html(text)
+    .style("left", x + "px")
+    .style("top", y + "px");
+}
+
+function HideSankeyTooltip() {
+  var tooltip = d3.select("#sankey_tooltip");
+  tooltip.transition().duration(200).style("opacity", 0);
 }
 
 sankey();

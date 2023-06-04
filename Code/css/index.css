@@ -17,6 +17,7 @@ h1 {
     border: 1px solid #d8d8d8;
     padding: 2.5% 3%;
     margin-bottom: 20px;
+    margin-top: -15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .note, .feature {
@@ -27,12 +28,33 @@ h1 {
 footer {
     margin-top: 2%;       
 }
-.footer_name {
-    width : 50%;
+/* tooltip */
+.tooltip {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 7px;
+    font-size: 12px;
+    border-radius: 4px;
+    width: 180px;
+    pointer-events: none;
+}
+
+#map_tooltip {
+    height: 25px;
+}
+
+#sankey_tooltip {
+    height: 40px;
+}
+/* map */
+#map {
+    margin-top: -40px;
 }
 /* map slider */
 .slider-container {
     margin-bottom: 20px;
+    margin-top: -15px;
     font-size: 1.2em;
 }
 .slider {
@@ -71,6 +93,7 @@ footer {
 #sankey {
     display: flex;
     justify-content: center;
+    margin-top: -20px;
 }
 #sankey_note {
     width: 92%;
