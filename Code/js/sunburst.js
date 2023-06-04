@@ -1,7 +1,7 @@
 function sunburst() {
   // partition
   partition = (data) =>
-    d3.partition().size([2 * Math.PI, radius * radius])(
+    d3.partition().size([2 * Math.PI, rad * rad])(
       d3
         .hierarchy(data)
         .sum((d) => d.value)
@@ -11,16 +11,16 @@ function sunburst() {
   // color scheme
   color = d3.scaleOrdinal(d3.schemeTableau10);
 
-  width = 620;
-  radius = width / 2;
+  width = 620; // size of the graph
+  rad = width / 2; // radius of the graph
 
   // create arc
   arc = d3
     .arc()
     .startAngle((d) => d.x0)
     .endAngle((d) => d.x1)
-    .padAngle(1 / radius)
-    .padRadius(radius)
+    .padAngle(1 / rad)
+    .padRadius(rad)
     .innerRadius((d) => Math.sqrt(d.y0))
     .outerRadius((d) => Math.sqrt(d.y1) - 1);
 
@@ -30,18 +30,18 @@ function sunburst() {
     .startAngle((d) => d.x0)
     .endAngle((d) => d.x1)
     .innerRadius((d) => Math.sqrt(d.y0))
-    .outerRadius(radius);
+    .outerRadius(rad);
 
   d3.json("../../Data/Chart_2/visa2021.json").then(function (data) {
     const root = partition(data);
     const svg = d3.select("#sunburst").append("svg");
 
     // nodes of the svg
-    const element = svg.node();
-    element.value = { sequence: [], percentage: 0.0 };
+    const component = svg.node();
+    component.value = { sequence: [], percentage: 0.0 };
 
     svg
-      .attr("viewBox", `${-radius} ${-radius} ${width} ${width}`)
+      .attr("viewBox", `${-rad} ${-rad} ${width} ${width}`)
       .style("width", `${width}px`);
 
     var initLabelValue = [
@@ -50,12 +50,12 @@ function sunburst() {
       "of total overseas migrants",
     ];
     // labels
-    const label = svg
+    const svg_label = svg
       .append("text")
       .attr("text-anchor", "middle")
       .attr("fill", "#888");
 
-    label
+    svg_label
       .append("tspan")
       .attr("class", "nodename")
       .attr("x", 0)
@@ -64,7 +64,7 @@ function sunburst() {
       .attr("font-size", "1.1em")
       .text(initLabelValue[0]);
 
-    label
+    svg_label
       .append("tspan")
       .attr("class", "percentage")
       .attr("x", 0)
@@ -73,7 +73,7 @@ function sunburst() {
       .attr("font-size", "1.1em")
       .text(initLabelValue[1]);
 
-    label
+    svg_label
       .append("tspan")
       .attr("x", 0)
       .attr("y", 0)
@@ -113,13 +113,13 @@ function sunburst() {
       .on("mouseleave", () => {
         path.attr("fill-opacity", 1);
         // update view value
-        element.value = { sequence: [], percentage: 0.0 };
-        element.dispatchEvent(new CustomEvent("input"));
+        component.value = { sequence: [], percentage: 0.0 };
+        component.dispatchEvent(new CustomEvent("input"));
 
         // return labels to initial vlaues
-        label.select(".percentage").text(initLabelValue[1]);
+        svg_label.select(".percentage").text(initLabelValue[1]);
 
-        label.select(".nodename").text(initLabelValue[0]);
+        svg_label.select(".nodename").text(initLabelValue[0]);
       })
       .selectAll("path")
       .data(
@@ -135,19 +135,19 @@ function sunburst() {
         const sequence = d.ancestors().reverse().slice(1);
         // highlight ancestors
         path.attr("fill-opacity", (node) =>
-          sequence.indexOf(node) >= 0 ? 1.0 : 0.3
+          sequence.indexOf(node) >= 0 ? 1.0 : 0.3 // choose the opacity level
         );
-        const percentage = ((100 * d.value) / root.value).toPrecision(3);
+        const percentage = ((100 * d.value) / root.value).toPrecision(3); // get the percentage value
         // show labels
-        label
+        svg_label
           .style("visibility", null)
           .select(".percentage")
           .text(d.value + " migrants (" + percentage + "%)");
 
-        label.select(".nodename").text(d.data.name);
+        svg_label.select(".nodename").text(d.data.name);
         // update value
-        element.value = { sequence, percentage };
-        element.dispatchEvent(new CustomEvent("input"));
+        component.value = { sequence, percentage };
+        component.dispatchEvent(new CustomEvent("input"));
 
       });
   });

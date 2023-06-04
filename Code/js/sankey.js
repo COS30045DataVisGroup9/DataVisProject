@@ -2,10 +2,20 @@ function sankey() {
   var w = 1450;
   var h = 800;
   var padding = 30;
-  var color = d3.scaleOrdinal(d3.schemeTableau10);
+
+  // import the color schemes
+  const schemeCategory10 = d3.schemeTableau10;
+  const schemeTableau10 = d3.schemeAccent;
+
+  // combine the colors into a new array
+  const combinedColors = schemeCategory10.concat(schemeTableau10);
+  var color = d3
+    .scaleOrdinal(d3.schemeTableau10)
+    .domain(d3.range(combinedColors.length))
+    .range(combinedColors);
 
   // generate the gradient id for the sankey link
-  const generateGradientId = (link) => {
+  const createGradientId = (link) => {
     return `gradient-${link.source.node}-${link.target.node}`;
   };
 
@@ -13,14 +23,15 @@ function sankey() {
   var svg = d3
     .select("#sankey")
     .append("svg")
-    .attr("width", w)
-    .attr("height", h)
+    .attr("width", w) // set up width
+    .attr("height", h) // set up height
     .attr("style", "border: 1px solid;");
 
   var g = svg
     .append("g")
     .attr("transform", "translate(" + padding + "," + padding + ")");
 
+  // zoom effect
   svg.call(
     d3
       .zoom()
@@ -51,15 +62,12 @@ function sankey() {
       .append("g")
       .attr("fill", "none")
       .selectAll("link")
-      .data(graph.links)
+      .data(graph.links) // get the links data
       .enter()
       .append("path")
       .attr("class", "link")
       .attr("d", d3.sankeyLinkHorizontal())
-      .attr(
-        "stroke",
-        (d) => (d.color = color(d.source.name.replace(/ .*/, "")))
-      )
+      .attr("stroke", (d) => (d.color = color(d.source.name)))
       .attr("stroke-opacity", 0.5)
       .attr("stroke-width", (d) => d.width)
       .on("mouseover", function (event, d) {
@@ -68,24 +76,15 @@ function sankey() {
           "State: " + d.target.name,
           "Net Overseas Migration: " + d.value * d.sign,
         ].join("<br/>");
-        ShowSankeyTooltip(event, tooltipText);
+        ShowSankeyTooltip(event, tooltipText); // show tooltip
       })
       .on("mouseleave", function (event, d) {
-        HideSankeyTooltip();
+        HideSankeyTooltip(); // hide the sankey tooltip
       });
-    // create link tooltip
-    // link.append("title").text((d) => {
-    //   const tooltipText = [
-    //     "Country: " + d.source.name,
-    //     "State: " + d.target.name,
-    //     "Net Overseas Migration: " + d.value * d.sign,
-    //   ].join("\n");
-    //   return tooltipText;
-    // });
 
     // create gradient color for link
     link.each(function (d, i) {
-      const gradientId = generateGradientId(d);
+      const gradientId = createGradientId(d);
 
       // create gradient
       const gradient = svg
@@ -99,13 +98,13 @@ function sankey() {
       gradient
         .append("stop")
         .attr("offset", "0%")
-        .attr("stop-color", color(d.source.name.replace(/ .*/, "")));
+        .attr("stop-color", color(d.source.name));
 
       // color ar the target
       gradient
         .append("stop")
         .attr("offset", "100%")
-        .attr("stop-color", color(d.target.name.replace(/ .*/, "")));
+        .attr("stop-color", color(d.target.name));
 
       d3.select(this)
         .attr("stroke", `url(#${gradientId})`)
@@ -116,13 +115,13 @@ function sankey() {
     var node = g
       .append("g")
       .selectAll(".node")
-      .data(graph.nodes)
+      .data(graph.nodes) // data for nodes
       .enter()
       .append("g")
       .attr("class", "node")
       .call(
         d3
-          .drag()
+          .drag() // drag event
           .subject((d) => d)
           .on("start", () => this.parentNode.appendChild(this))
           .on("drag", movenode)
@@ -134,11 +133,11 @@ function sankey() {
       .attr("x", (d) => d.x0)
       .attr("y", (d) => d.y0)
       .attr("height", function (d) {
-        d.rectHeight = d.y1 - d.y0;
+        d.rectHeight = d.y1 - d.y0;   // height of the node
         return d.y1 - d.y0;
       })
-      .attr("width", sankey.nodeWidth())
-      .style("fill", (d) => (d.color = color(d.name.replace(/ .*/, ""))))
+      .attr("width", sankey.nodeWidth()) // width of the node
+      .style("fill", (d) => (d.color = color(d.name)))
       .attr("stroke", "#000")
       .append("title");
 
@@ -147,8 +146,8 @@ function sankey() {
       .append("text")
       .attr("x", (d) => d.x0 - 5)
       .attr("y", (d) => (d.y1 + d.y0) / 2)
-      .attr("dy", "0.3em")
-      .attr("text-anchor", "end")
+      .attr("dy", "0.3em") // size of the title
+      .attr("text-anchor", "end") // position the text
       .text((d) => d.name)
       .filter((d) => d.x0 < w / 2)
       .attr("x", (d) => d.x1 + 5)
@@ -175,6 +174,7 @@ function sankey() {
   });
 }
 
+// show the tooltip
 function ShowSankeyTooltip(event, text) {
   var tooltip = d3.select("#sankey_tooltip");
   var [x, y] = d3.pointer(event);
@@ -186,6 +186,7 @@ function ShowSankeyTooltip(event, text) {
     .style("top", y + "px");
 }
 
+// hide the tooltip
 function HideSankeyTooltip() {
   var tooltip = d3.select("#sankey_tooltip");
   tooltip.transition().duration(200).style("opacity", 0);
